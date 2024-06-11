@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class RowContent {
     private ArrayList<String> cellContents;
 
-    public RowContent(ArrayList<String> cells) {
-        this.cellContents = cells;
+    public RowContent() {
+        this.cellContents = new ArrayList<>();
     }
 
     public void addCell(String cell) {

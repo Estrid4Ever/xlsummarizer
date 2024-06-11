@@ -1,24 +1,23 @@
 package se.johsteran;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FileHandler {
-    private HSSFWorkbook workbook;
-    private HSSFSheet sheet;
-    private ArrayList<HSSFRow> rows;
+public class FileWriter {
+    private Workbook workbook;
+    private Sheet sheet;
+    private ArrayList<Row> rows;
     private ArrayList<RowContent> rowContents;
 
     public void createFile(String fileName, String destinationPath) {
         try {
-            workbook = new HSSFWorkbook();
+            workbook = new XSSFWorkbook();
 
             createSheet();
             createRows();
@@ -34,7 +33,12 @@ public class FileHandler {
     }
 
     private String createFullPath(String destinationPath, String fileName) {
-        return destinationPath + "" + fileName;
+        String slashType = destinationPath.contains("/") ? "/" : "\\";
+        String fileType = "";
+        if (!fileName.endsWith(".xlsx")) {
+            fileType = ".xlsx";
+        }
+        return destinationPath + slashType + fileName + fileType;
     }
 
     public void createSheet() {
@@ -47,7 +51,7 @@ public class FileHandler {
         int rowAmount = rowContents.size();
 
         for (int i = 0; i < rowAmount; i++) {
-            rows.add(sheet.createRow((short)i));
+            rows.add(sheet.createRow(i));
         }
     }
 
@@ -70,5 +74,9 @@ public class FileHandler {
 
         fileOut.close();
         workbook.close();
+    }
+
+    public void setRowContents(ArrayList<RowContent> rowContents) {
+        this.rowContents = rowContents;
     }
 }
