@@ -1,6 +1,6 @@
 package se.johsteran;
 
-import java.nio.file.Path;
+import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,14 +8,17 @@ public class Main {
         FileWriter fileWriter = new FileWriter();
 
 
-        String directory = "/Users/johannes/Programmering/Github/xlsummarizer";
+        String directory = "/home/johannes/Documents/GitHub/egenDAO_V47/xlsummarizer";
 
         fileReader.setDirectory(directory);
+        fileReader.addCellsToRead("a1");
+        fileReader.addCellsToRead("b1");
 
-        fileReader.readFilesInDirectory();
+        fileReader.findXlsxFilesInDirectory();
+        fileReader.readAllWorkBooks();
 
-        //fileWriter.setRowContents(fileReader.getRows());
+        fileWriter.setRowContents(fileReader.getRows());
 
-        //fileWriter.createFile("test1", directory);
+        fileWriter.createFile("test5", directory);
     }
 }
