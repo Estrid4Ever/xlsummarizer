@@ -1,4 +1,4 @@
-package se.johsteran;
+package se.johsteran.logic;
 
 import java.util.ArrayList;
 

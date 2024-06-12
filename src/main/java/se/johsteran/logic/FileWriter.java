@@ -1,4 +1,4 @@
-package se.johsteran;
+package se.johsteran.logic;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class FileWriter {
@@ -15,7 +16,7 @@ public class FileWriter {
     private ArrayList<Row> rows;
     private ArrayList<RowContent> rowContents;
 
-    public void createFile(String fileName, String destinationPath) {
+    public void createFile(String destinationPath) {
         try {
             workbook = new XSSFWorkbook();
 
@@ -23,7 +24,7 @@ public class FileWriter {
             createRows();
             writeToCells();
 
-            String fullPath = createFullPath(destinationPath, fileName);
+            String fullPath = createFullPath(destinationPath);
 
             saveAndCloseFileOutPutStream(fullPath);
 
@@ -32,13 +33,15 @@ public class FileWriter {
         }
     }
 
-    private String createFullPath(String destinationPath, String fileName) {
+    private String createFullPath(String destinationPath) {
         String slashType = destinationPath.contains("/") ? "/" : "\\";
-        String fileType = "";
-        if (!fileName.endsWith(".xlsx")) {
-            fileType = ".xlsx";
-        }
-        return destinationPath + slashType + fileName + fileType;
+        String fileName = createFileName();
+
+        return destinationPath + slashType + fileName;
+    }
+
+    public String createFileName() {
+        return "xlSummarized_" + LocalDateTime.now().withNano(0) + ".xlsx";
     }
 
     public void createSheet() {
