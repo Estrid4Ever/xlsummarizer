@@ -9,26 +9,38 @@ public class Main {
 
     public static FileReader fileReader;
     public static FileWriter fileWriter;
-    public static ArrayList<String> cells;
+    public static ArrayList<String> cellIds;
 
     public static void main(String[] args) {
 
-        String directory = "/home/johannes/Documents/GitHub/egenDAO_V47/xlsummarizer";
+        SwingIO swingIO = new SwingIO();
 
-        readFiles(directory);
-        writeFiles(directory);
+        String directory = swingIO.getDirectory();
+
+        //readFiles(directory);
+        //writeFiles(directory);
+    }
+
+    public static ArrayList<String> verifyRowAndColumnIdFormat() {
+        ArrayList<String> wronglyFormatedCellIds = new ArrayList<>();
+        for (int i = 0; i < cellIds.size(); i++) {
+            if (!cellIds.get(i).matches("[a-zA-Z]*\\d*")) {
+                wronglyFormatedCellIds.add(cellIds.get(i));
+            }
+        }
+        return wronglyFormatedCellIds;
     }
 
     public static void addCell(String cell) {
-        cells.add(cell);
+        cellIds.add(cell);
     }
 
     public static void readFiles(String directory) {
         fileReader = new FileReader();
         fileReader.setDirectory(directory);
 
-        for (int i = 0; i < cells.size(); i++) {
-            fileReader.addCellsToRead(cells.get(i));
+        for (int i = 0; i < cellIds.size(); i++) {
+            fileReader.addCellsToRead(cellIds.get(i));
         }
 
         fileReader.findXlsxFilesInDirectory();

@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.ToDoubleBiFunction;
 
 public class FileReader {
     private ArrayList<RowContent> rows;
@@ -40,6 +41,7 @@ public class FileReader {
         cellsToRead.put(firstNumber, Character.getNumericValue(cell.charAt(1))-1);
     }
 
+    //TODO make it scalable to multi-letter columns
     public int letterToAlphabeticNumericPlacementOfLetter(String letter) {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
         char[] alphabetArray = alphabet.toCharArray();
