@@ -10,25 +10,18 @@ public class Main {
     public static FileReader fileReader;
     public static FileWriter fileWriter;
     public static ArrayList<String> cellIds;
+    public static String directory;
 
     public static void main(String[] args) {
 
         SwingIO swingIO = new SwingIO();
+        directory = swingIO.getDirectory();
 
-        String directory = swingIO.getDirectory();
-
-        //readFiles(directory);
-        //writeFiles(directory);
     }
 
-    public static ArrayList<String> verifyRowAndColumnIdFormat() {
-        ArrayList<String> wronglyFormatedCellIds = new ArrayList<>();
-        for (int i = 0; i < cellIds.size(); i++) {
-            if (!cellIds.get(i).matches("[a-zA-Z]*\\d*")) {
-                wronglyFormatedCellIds.add(cellIds.get(i));
-            }
-        }
-        return wronglyFormatedCellIds;
+    public static void run() {
+        readFiles(directory);
+        writeFiles(directory);
     }
 
     public static void addCell(String cell) {
