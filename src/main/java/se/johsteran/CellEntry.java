@@ -1,7 +1,6 @@
 package se.johsteran;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class CellEntry {
     private JTextField cellId;
@@ -19,16 +18,6 @@ public class CellEntry {
     }
 
     public CellEntry() {
-    }
-
-    public static ArrayList<String> verifyRowAndColumnIdFormat() {
-        ArrayList<String> wronglyFormatedCellIds = new ArrayList<>();
-        for (int i = 0; i < cellIds.size(); i++) {
-            if (!cellIds.get(i).matches("[a-zA-Z]*\\d*")) {
-                wronglyFormatedCellIds.add(cellIds.get(i));
-            }
-        }
-        return wronglyFormatedCellIds;
     }
 
     public JTextField getCellId() {
@@ -49,6 +38,14 @@ public class CellEntry {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public boolean verifyCellIdFormatAndMarkAsSelected() {
+        if (cellId.getText().matches("[a-zA-Z]*\\d*")) {
+            this.selected = true;
+            return true;
+        }
+        return false;
     }
 
     public void setSelected(boolean selected) {

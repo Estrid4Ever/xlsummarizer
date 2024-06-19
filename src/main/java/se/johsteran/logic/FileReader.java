@@ -33,6 +33,10 @@ public class FileReader {
         return rows;
     }
 
+    public ArrayList<String> getFiles() {
+        return files;
+    }
+
     public void addCellsToRead(String cell) {
         int firstNumber = letterToAlphabeticNumericPlacementOfLetter(String.valueOf(cell.charAt(0)));
         if (firstNumber == 100) {

@@ -1,5 +1,6 @@
 package se.johsteran;
 
+import se.johsteran.io.SwingIO;
 import se.johsteran.logic.FileReader;
 import se.johsteran.logic.FileWriter;
 
@@ -11,21 +12,26 @@ public class Main {
     public static FileWriter fileWriter;
     public static ArrayList<String> cellIds;
     public static String directory;
+    public static SwingIO swingIO;
 
     public static void main(String[] args) {
 
-        SwingIO swingIO = new SwingIO();
-        directory = swingIO.getDirectory();
+        swingIO = new SwingIO();
 
     }
 
     public static void run() {
+        directory = swingIO.getDirectory();
+        addCellIds(swingIO.getCellEntries());
         readFiles(directory);
         writeFiles(directory);
     }
 
-    public static void addCell(String cell) {
-        cellIds.add(cell);
+    public static void addCellIds(ArrayList<CellEntry> cellEntries) {
+        cellIds = new ArrayList<>();
+        for (int i = 0; i < (cellEntries.size() -1); i++) {
+            cellIds.add(cellEntries.get(i).getCellId().getText());
+        }
     }
 
     public static void readFiles(String directory) {

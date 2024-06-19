@@ -1,4 +1,7 @@
-package se.johsteran;
+package se.johsteran.io;
+
+import se.johsteran.CellEntry;
+import se.johsteran.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,12 +12,12 @@ public class SwingIO {
 
     private JPanel mainPanel;
     private JFrame frame;
-    private JPanel northPanel;
     private JPanel southPanel;
     private JPanel centerPanel;
     private ArrayList<CellEntry> cellEntries =  new ArrayList<>();
     private String directory;
     private JTextField selectedDirectory;
+    private JButton browseDirectoriesButton;
     private GridLayout gridLayout;
 
     public SwingIO() {
@@ -23,23 +26,19 @@ public class SwingIO {
         mainPanel = new JPanel();
         frame.add(mainPanel);
         mainPanel.setLayout(new BorderLayout());
-        northPanel = new JPanel();
-        mainPanel.add(northPanel, BorderLayout.NORTH);
-        northPanel.setLayout(new BorderLayout());
+
         southPanel = new JPanel();
+        southPanel.setLayout(new BorderLayout());
         mainPanel.add(southPanel, BorderLayout.SOUTH);
+
         centerPanel = new JPanel();
         gridLayout = new GridLayout(12, 1, 15, 1);
-
-        JScrollPane scrollPane = new JScrollPane(centerPanel);
-        scrollPane.setHorizontalScrollBarPolicy(31);
-
         centerPanel.setLayout(gridLayout);
         centerPanel.setAutoscrolls(true);
 
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
         addCellEntryField();
 
+        scrollPaneConfig();
 
         selectedDirectoryPreview();
 
@@ -47,23 +46,52 @@ public class SwingIO {
 
         runButton();
 
+
+        frame.setLocationRelativeTo(null);
         frame.setSize(600, 600);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.getRootPane().setDefaultButton(browseDirectoriesButton);
+        browseDirectoriesButton.requestFocus();
     }
 
     private void runButton() {
         JButton runButton = new JButton("Summarize");
 
-        southPanel.add(runButton);
+        southPanel.add(runButton, BorderLayout.SOUTH);
 
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.run();
-                System.exit(0);
+                if (directory == null) {
+                    JOptionPane.showMessageDialog(frame, "Select a folder", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    Main.run();
+                    JOptionPane.showMessageDialog(frame, "Summary Completed", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
+                }
             }
         });
+    }
+
+    public void scrollPaneConfig() {
+        JScrollPane scrollPane = new JScrollPane(centerPanel);
+        scrollPane.setHorizontalScrollBarPolicy(31);
+
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            private int scrollPaneMaximum = 0;
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+
+                if (e.getAdjustable().getMaximum() > scrollPaneMaximum) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                }
+
+                scrollPaneMaximum = e.getAdjustable().getMaximum();
+            }
+        });
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
     public void addCellEntryField() {
@@ -90,6 +118,11 @@ public class SwingIO {
 
         centerPanel.add(cellPanel);
 
+        addCellEntryButtonActionListener(button);
+
+    }
+
+    private void addCellEntryButtonActionListener(JButton button) {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,9 +143,17 @@ public class SwingIO {
                     centerPanel.revalidate();
 
                 } else {
-                    cellEntry.setSelected(true);
-                    cellEntry.getButton().setText("❌");
-                    addCellEntryField();
+                    if (cellEntry.verifyCellIdFormatAndMarkAsSelected()){
+                        cellEntry.getButton().setText("❌");
+                        cellEntry.getCellId().setEditable(false);
+                        cellEntry.getCellName().setEditable(false);
+                        cellEntry.getCellId().setFocusable(false);
+                        cellEntry.getCellName().setFocusable(false);
+                        addCellEntryField();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Wrong Cell ID Format", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });
@@ -120,6 +161,7 @@ public class SwingIO {
 
     public void addPlaceHolderText(String text, JTextField textField) {
         textField.setForeground(Color.GRAY);
+
         textField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -147,7 +189,7 @@ public class SwingIO {
     }
 
     public void findFolderTroughBrowse() {
-        JButton browseDirectoriesButton = new JButton("Browse folders");
+        browseDirectoriesButton = new JButton("Browse folders");
         southPanel.add(browseDirectoriesButton, BorderLayout.LINE_END);
 
         browseDirectoriesButton.addActionListener(new ActionListener() {
@@ -169,14 +211,6 @@ public class SwingIO {
             }
         });
     }
-
-//    public void addToolTipButton() {
-//        JButton toolTipButton = new JButton("?");
-//        JToolTip jToolTip = new JToolTip();
-//        jToolTip.setTipText("The folders appear empty because the browsing tool only looks for folders and not files.");
-//        jToolTip.setComponent(toolTipButton);
-//        southPanel.add(toolTipButton);
-//    }
 
     public String getDirectory() {
         return directory;
