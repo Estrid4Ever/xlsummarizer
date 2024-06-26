@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.ToDoubleBiFunction;
 
 public class FileReader {
     private ArrayList<RowContent> rows;
@@ -109,16 +108,16 @@ public class FileReader {
 
         Row row = sheet.getRow(vRow); //returns the logical row
         if (row == null) {
-            return "";
+            return "row N/A";
         }
 
         Cell cell = row.getCell(vColumn); //getting the cell representing the given column
         if (cell == null) {
-            return "";
+            return "cell N/A";
         }
 
         String value = cell.getStringCellValue();   //gets the cell value
 
-        return value == null ? "" : value;  //returns the cell value if it´s not null
+        return value == null ? "value N/A" : value;  //returns the cell value if it´s not null
     }
 }

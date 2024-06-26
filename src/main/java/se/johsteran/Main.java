@@ -13,6 +13,7 @@ public class Main {
     public static ArrayList<String> cellIds;
     public static String directory;
     public static SwingIO swingIO;
+    public static ArrayList<String> columnTitles;
 
     public static void main(String[] args) {
 
@@ -21,8 +22,12 @@ public class Main {
     }
 
     public static void run() {
+        ArrayList<CellEntry> cellEntries = swingIO.getCellEntries();
         directory = swingIO.getDirectory();
-        addCellIds(swingIO.getCellEntries());
+
+        addColumnTitles(cellEntries);
+        addCellIds(cellEntries);
+
         readFiles(directory);
         writeFiles(directory);
     }
@@ -31,6 +36,15 @@ public class Main {
         cellIds = new ArrayList<>();
         for (int i = 0; i < (cellEntries.size() -1); i++) {
             cellIds.add(cellEntries.get(i).getCellId().getText());
+        }
+    }
+
+    public static void addColumnTitles(ArrayList<CellEntry> cellEntries) {
+        columnTitles = new ArrayList<>();
+        columnTitles.add("File name");
+
+        for (int i = 0; i < (cellEntries.size() -1); i++) {
+            columnTitles.add(cellEntries.get(i).getCellName().getText());
         }
     }
 
@@ -48,6 +62,8 @@ public class Main {
 
     public static void writeFiles(String directory) {
         fileWriter = new FileWriter();
+
+        fileWriter.setColumnTitles(columnTitles);
 
         fileWriter.setRowContents(fileReader.getRows());
         fileWriter.createFile(directory);

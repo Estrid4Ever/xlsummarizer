@@ -16,6 +16,8 @@ public class FileWriter {
     private ArrayList<Row> rows;
     private ArrayList<RowContent> rowContents;
 
+    private ArrayList<String> columnTitles;
+
     public void createFile(String destinationPath) {
         try {
             workbook = new XSSFWorkbook();
@@ -51,7 +53,7 @@ public class FileWriter {
     public void createRows() {
         rows = new ArrayList<>();
 
-        int rowAmount = rowContents.size();
+        int rowAmount = rowContents.size() +1;
 
         for (int i = 0; i < rowAmount; i++) {
             rows.add(sheet.createRow(i));
@@ -59,14 +61,27 @@ public class FileWriter {
     }
 
     public void writeToCells() {
+        writeColumnTitles();
+        writeReadContent();
+    }
+
+    public void writeColumnTitles() {
+
+        for (int i = 0; i < columnTitles.size(); i++) {
+            rows.get(0).createCell(i).setCellValue(columnTitles.get(i));
+        }
+    }
+
+    public void writeReadContent() {
         int rowAmount = rowContents.size();
+        System.out.println(rowContents);
 
         for (int i = 0; i < rowAmount; i++) {
             int cellAmount = rowContents.get(i).getCellContents().size();
             RowContent rowContent = rowContents.get(i);
 
             for (int j = 0; j < cellAmount; j++) {
-                rows.get(i).createCell(j).setCellValue(rowContent.getCellContents().get(j));
+                rows.get(i+1).createCell(j).setCellValue(rowContent.getCellContents().get(j));
             }
         }
     }
@@ -81,5 +96,9 @@ public class FileWriter {
 
     public void setRowContents(ArrayList<RowContent> rowContents) {
         this.rowContents = rowContents;
+    }
+
+    public void setColumnTitles(ArrayList<String> columnTitles) {
+        this.columnTitles = columnTitles;
     }
 }

@@ -17,6 +17,13 @@ public class RowContent {
         return cellContents;
     }
 
+    @Override
+    public String toString() {
+        return "RowContent{" +
+                "cellContents=" + cellContents +
+                '}';
+    }
+
     public void setCellContents(ArrayList<String> cellContents) {
         this.cellContents = cellContents;
     }
