@@ -36,6 +36,7 @@ public class Main {
         cellIds = new ArrayList<>();
         for (int i = 0; i < (cellEntries.size() -1); i++) {
             cellIds.add(cellEntries.get(i).getCellId().getText());
+            System.out.println(cellIds.getLast());
         }
     }
 

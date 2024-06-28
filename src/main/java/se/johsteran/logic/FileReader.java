@@ -41,7 +41,19 @@ public class FileReader {
         if (firstNumber == 100) {
             return;
         }
-        cellsToRead.put(firstNumber, Character.getNumericValue(cell.charAt(1))-1);
+
+        int secondNumber = 0;
+        //todo make a real split between nr and letter, no matter how many chars
+        try {
+            secondNumber = Integer.parseInt(String.valueOf(cell.charAt(1))) -1;
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+        }
+
+        System.out.println("first: " + firstNumber + " second: " + secondNumber);
+        //todo PUT OVERWRITES if first nr is the same!
+        cellsToRead.put(firstNumber, secondNumber);
+        System.out.println(cellsToRead);
     }
 
     //TODO make it scalable to multi-letter columns
@@ -80,6 +92,7 @@ public class FileReader {
         RowContent rowContent = new RowContent();
         rowContent.addCell(getFileNameFromAbsolutePath(file));
         cellsToRead.forEach((column, row) -> {
+            System.out.println("c: " + column + " r: " + row);
             rowContent.addCell(readCellData(column, row, file));
         });
 
@@ -91,7 +104,7 @@ public class FileReader {
     }
 
     public String readCellData(int vColumn, int vRow, String file) {
-        Workbook wb = null;           //initialize Workbook null
+        Workbook wb = null; //initialize Workbook null
 
         try {
             //reading data from a file in the form of bytes
@@ -103,8 +116,10 @@ public class FileReader {
             System.out.println(e1);
         }
 
-        assert wb != null;
-        Sheet sheet = wb.getSheetAt(0);   //getting the XSSFSheet object at given index
+        Sheet sheet = wb.getSheetAt(0); //getting the XSSFSheet object at given index
+        if (sheet == null) {
+            return "sheet N/A";
+        }
 
         Row row = sheet.getRow(vRow); //returns the logical row
         if (row == null) {

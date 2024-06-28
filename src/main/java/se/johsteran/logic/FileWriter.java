@@ -74,7 +74,6 @@ public class FileWriter {
 
     public void writeReadContent() {
         int rowAmount = rowContents.size();
-        System.out.println(rowContents);
 
         for (int i = 0; i < rowAmount; i++) {
             int cellAmount = rowContents.get(i).getCellContents().size();
