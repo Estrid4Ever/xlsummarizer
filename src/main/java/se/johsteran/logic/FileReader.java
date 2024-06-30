@@ -5,23 +5,23 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import se.johsteran.NumberTranslatedCellId;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FileReader {
     private ArrayList<RowContent> rows;
     private String directory;
     private ArrayList<String> files;
-    private HashMap<Integer, Integer> cellsToRead;
+    private ArrayList<NumberTranslatedCellId> cellsToRead;
 
     public FileReader() {
         this.rows = new ArrayList<>();
         this.files = new ArrayList<>();
-        this.cellsToRead = new HashMap<>();
+        this.cellsToRead = new ArrayList<>();
     }
 
     public void setDirectory(String directory) {
@@ -37,36 +37,41 @@ public class FileReader {
     }
 
     public void addCellsToRead(String cell) {
-        int firstNumber = letterToAlphabeticNumericPlacementOfLetter(String.valueOf(cell.charAt(0)));
+        String[] firstAndSecondNr = cell.split("((?=\\d))", 2);
+        System.out.println(firstAndSecondNr[0] + " " + firstAndSecondNr[1]);
+
+        int firstNumber = lettersToNumberConversion(firstAndSecondNr[0]);
         if (firstNumber == 100) {
             return;
         }
 
         int secondNumber = 0;
-        //todo make a real split between nr and letter, no matter how many chars
         try {
-            secondNumber = Integer.parseInt(String.valueOf(cell.charAt(1))) -1;
+            secondNumber = Integer.parseInt(firstAndSecondNr[1]) -1;
         } catch (NumberFormatException e) {
             System.out.println(e);
         }
 
         System.out.println("first: " + firstNumber + " second: " + secondNumber);
-        //todo PUT OVERWRITES if first nr is the same!
-        cellsToRead.put(firstNumber, secondNumber);
+
+        cellsToRead.add(new NumberTranslatedCellId(firstNumber, secondNumber));
         System.out.println(cellsToRead);
     }
 
-    //TODO make it scalable to multi-letter columns
-    public int letterToAlphabeticNumericPlacementOfLetter(String letter) {
-        String alphabet = "abcdefghijklmnopqrstuvwxyz";
-        char[] alphabetArray = alphabet.toCharArray();
+    public int lettersToNumberConversion(String letters) {
+        // Convert the column string to uppercase to handle lowercase inputs
+        letters = letters.toUpperCase();
+        int length = letters.length();
+        int result = 0;
 
-        for (int i = 0; i < alphabetArray.length; i++) {
-            if (letter.equalsIgnoreCase(String.valueOf(alphabetArray[i]))) {
-                return i;
-            }
+        // Iterate over each character in the string
+        for (int i = 0; i < length; i++) {
+            char c = letters.charAt(i);
+            int value = c - 'A' + 1; // Calculate the value of the character
+            result = result * 26 + value; // Update the result with the new value
         }
-        return 100;
+
+        return result - 1; //minus one to start the count from 0 instead of 1
     }
 
     public void findXlsxFilesInDirectory() {
@@ -91,9 +96,9 @@ public class FileReader {
     public void readWorkBook(String file) {
         RowContent rowContent = new RowContent();
         rowContent.addCell(getFileNameFromAbsolutePath(file));
-        cellsToRead.forEach((column, row) -> {
-            System.out.println("c: " + column + " r: " + row);
-            rowContent.addCell(readCellData(column, row, file));
+        cellsToRead.forEach((numberTranslatedCellId) -> {
+            System.out.println("c: " + numberTranslatedCellId.column() + " r: " + numberTranslatedCellId.row());
+            rowContent.addCell(readCellData(numberTranslatedCellId.column(), numberTranslatedCellId.row(), file));
         });
 
         rows.add(rowContent);
